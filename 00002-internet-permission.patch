@@ -245,4 +245,76 @@ index 8884821c770..88b6a012210 100644
              return;
          }
  
+diff --git a/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/AppPermissionGroup.java b/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/AppPermissionGroup.java
+index da527777..c9fa2ca3 100644
+--- a/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/AppPermissionGroup.java
++++ b/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/AppPermissionGroup.java
+@@ -33,6 +33,7 @@ import android.content.pm.PackageManager;
+ import android.content.pm.PackageManager.NameNotFoundException;
+ import android.content.pm.PermissionGroupInfo;
+ import android.content.pm.PermissionInfo;
++import android.Manifest;
+ import android.os.Build;
+ import android.os.UserHandle;
+ import android.permission.PermissionManager;
+@@ -785,7 +786,7 @@ public final class AppPermissionGroup implements Comparable<AppPermissionGroup>
+ 
+             boolean wasGranted = permission.isGrantedIncludingAppOp();
+ 
+-            if (mAppSupportsRuntimePermissions) {
++            if (mAppSupportsRuntimePermissions || Manifest.permission.INTERNET.equals(permission.getName())) {
+                 // Do not touch permissions fixed by the system.
+                 if (permission.isSystemFixed()) {
+                     wasAllGranted = false;
+@@ -962,7 +963,7 @@ public final class AppPermissionGroup implements Comparable<AppPermissionGroup>
+                 break;
+             }
+ 
+-            if (mAppSupportsRuntimePermissions) {
++            if (mAppSupportsRuntimePermissions || Manifest.permission.INTERNET.equals(permission.getName())) {
+                 // Revoke the permission if needed.
+                 if (permission.isGranted()) {
+                     permission.setGranted(false);
+diff --git a/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/Permission.java b/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/Permission.java
+index 463c3479..c2ec8890 100644
+--- a/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/Permission.java
++++ b/packages/apps/PermissionController/src/com/android/packageinstaller/permission/model/Permission.java
+@@ -18,6 +18,7 @@ package com.android.packageinstaller.permission.model;
+ 
+ import android.content.pm.PackageManager;
+ import android.content.pm.PermissionInfo;
++import android.Manifest;
+ 
+ import androidx.annotation.NonNull;
+ 
+@@ -136,7 +137,7 @@ public final class Permission {
+      * @return {@code true} if the permission (and the app-op) is granted.
+      */
+     public boolean isGrantedIncludingAppOp() {
+-        return mGranted && (!affectsAppOp() || isAppOpAllowed()) && !isReviewRequired();
++        return mGranted && (!affectsAppOp() || isAppOpAllowed()) && (!isReviewRequired() || Manifest.permission.INTERNET.equals(mName));
+     }
+ 
+     public boolean isReviewRequired() {
+diff --git a/packages/apps/PermissionController/src/com/android/packageinstaller/permission/utils/Utils.java b/packages/apps/PermissionController/src/com/android/packageinstaller/permission/utils/Utils.java
+index 707b9f7b..cbde987a 100644
+--- a/packages/apps/PermissionController/src/com/android/packageinstaller/permission/utils/Utils.java
++++ b/packages/apps/PermissionController/src/com/android/packageinstaller/permission/utils/Utils.java
+@@ -24,6 +24,7 @@ import static android.Manifest.permission_group.CAMERA;
+ import static android.Manifest.permission_group.CONTACTS;
+ import static android.Manifest.permission_group.LOCATION;
+ import static android.Manifest.permission_group.MICROPHONE;
++import static android.Manifest.permission_group.NETWORK;
+ import static android.Manifest.permission_group.PHONE;
+ import static android.Manifest.permission_group.SENSORS;
+ import static android.Manifest.permission_group.SMS;
+@@ -169,6 +170,8 @@ public final class Utils {
+ 
+         PLATFORM_PERMISSIONS.put(Manifest.permission.BODY_SENSORS, SENSORS);
+ 
++        PLATFORM_PERMISSIONS.put(Manifest.permission.INTERNET, NETWORK);
++
+         PLATFORM_PERMISSION_GROUPS = new ArrayMap<>();
+         int numPlatformPermissions = PLATFORM_PERMISSIONS.size();
+         for (int i = 0; i < numPlatformPermissions; i++) {
 
