@@ -43,10 +43,10 @@ index 04d1eef..5362e2b 100644
  
      <!-- Whether to use voip audio mode for ims call -->
      <bool name="config_use_voip_mode_for_ims">false</bool>
-diff --git a/device/google/crosshatch/product.prop b/device/google/crosshatch/product.prop
+diff --git a/device/google/bonito/product.prop b/device/google/bonito/product.prop
 index f1247c0..4114493 100644
---- a/device/google/crosshatch/product.prop
-+++ b/device/google/crosshatch/product.prop
+--- a/device/google/bonito/product.prop
++++ b/device/google/bonito/product.prop
 @@ -41,6 +41,16 @@ vidc.enc.disable.pq=1
  persist.data.netmgrd.qos.enable=true
  persist.vendor.data.mode=concurrent
